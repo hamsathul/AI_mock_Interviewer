@@ -6,6 +6,7 @@ import {eq} from 'drizzle-orm'
 import Webcam from "react-webcam";
 import { Lightbulb, WebcamIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import Link from 'next/link'
 
 function Interview({params}) {
 
@@ -31,9 +32,9 @@ function Interview({params}) {
 		<div className='flex flex-col my-5  '>
 			<div className='flex flex-col p-5 gap-5 rounded-lg border'>
 
-			<h2 className='text-lg font-medium'>Job Role/Position: <strong>{interviewData.jobPosition}</strong></h2>
-			<h2 className='text-lg font-medium'>Job Description: <strong>{interviewData.jobDesc}</strong></h2>
-			<h2 className='text-lg font-medium'>Experience: <strong>{interviewData.jobExperience}</strong></h2>
+			<h2 className='text-lg font-medium'>Job Role/Position: <strong>{interviewData?.jobPosition}</strong></h2>
+			<h2 className='text-lg font-medium'>Job Description: <strong>{interviewData?.jobDesc}</strong></h2>
+			<h2 className='text-lg font-medium'>Experience: <strong>{interviewData?.jobExperience}</strong></h2>
 			</div>
 			<div className='p-5 border rounded-lg bg-yellow-100 border-yellow-300 mt-2'>
 				<h2 className='flex gap-2 items-center text-yellow-500'><Lightbulb className=''/><strong></strong>Information</h2>
@@ -63,8 +64,9 @@ function Interview({params}) {
 		</div>	
 		</div>
 		<div className='flex justify-end items-end'>
-
+			<Link href={`/dashboard/interview/${params.interviewId}/start`}>
 			<Button>Start Interview</Button>
+			</Link>
 		</div>
 		
 	</div>
