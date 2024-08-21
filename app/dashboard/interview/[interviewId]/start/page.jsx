@@ -40,7 +40,10 @@ function StartInterview({params}) {
 			/>
 
 			{/* Video/audio Recording */}
-			<RecordAnswerSection/>
+			<RecordAnswerSection mockInterviewQuestion={mockInterviewQuestion}
+			activeQuestionIndex={activeQuestionIndex}
+			interviewData={interviewData}
+			/>
 
 		</div>
 	</div>
