@@ -12,6 +12,13 @@ import {Button} from "@/components/ui/button"
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { chatSession } from '@/utils/GeminiAI'
+import {  LoaderCircle } from 'lucide-react'
+import { db } from '@/utils/db'
+import { mockInterview } from '@/utils/schema'
+import { v4 as uuidv4 } from 'uuid';
+import { useUser } from '@clerk/nextjs'
+import moment from 'moment/moment'
 
   
 
@@ -21,11 +28,50 @@ function AddNewInterview() {
 	const [jobPosition, setJobPosition] = useState()
 	const [jobDescription, setJobDescription] = useState()
 	const [jobExperience, setJobExperience] = useState()
+	const [loading, setLoading] = useState(false)
+	const [jsonResponse, setJsonResponse] = useState([])
+	const {user} = useUser()
 
-	const onSubmit = (e) => {
+	const onSubmit = async(e) => {
+		setLoading(true)
 		e.preventDefault()
-		console.log(jobPosition, jobDescription, jobExperience)
-		setOpenDialogue(false)
+		// console.log(jobPosition, jobDescription, jobExperience)
+		
+		const inputPrompt = `Job Position: ${jobPosition}, 
+		Job Description: ${jobDescription}, 
+		Years of Experience: ${jobExperience}., 
+		as a professional human resources manager specialized in conducting interviews, 
+		based on the information please provide me ${process.env.NEXT_PUBLIC_INTERVIEW_QUESTION_COUNT} interview questions with answers in JSON format. 
+		 example: {question: "what is your name?", answer: "my name is John Doe"}. you dont have to give a label to the initial JSON object.`
+		
+		const res = await chatSession.sendMessage(inputPrompt)
+		
+		// console.log(JSON.parse(res.response.text()))
+		setJsonResponse((res.response.text()))
+
+		if(res.response.text()){
+
+			const response = await db.insert(mockInterview)
+			.values({
+				mockId: uuidv4(),
+				jsonMockResp: res.response.text(),
+				jobPosition: jobPosition,
+				jobDesc: jobDescription,
+				jobExperience: jobExperience,
+				createdBy: user?.primaryEmailAddress?.emailAddress,
+				createdAt: moment().format('DD-MM-yyyy')
+			}).returning({mockId:mockInterview.mockId})
+			
+			console.log("Inserted Id: ", response)
+			setLoading(false)
+			setOpenDialogue(false)
+		}else{
+			setLoading(false)
+			setOpenDialogue(false)
+			console.log("Error")
+		}
+
+		
 	}
   return (
 	<div>
@@ -41,7 +87,9 @@ function AddNewInterview() {
 				<DialogHeader>
 				<DialogTitle className='text-2xl'> Tell us about your Inverviewer</DialogTitle>
 				<DialogDescription>
-					<form onSubmit={onSubmit}>
+					<form onSubmit={onSubmit}
+					
+					>
 
 				<div>
 				
@@ -70,7 +118,9 @@ function AddNewInterview() {
 						type="button" 
 						variant="ghost"
 						onClick={() => setOpenDialogue(false)}>Cancel</Button>
-						<Button type="submit">Start Interview</Button>
+						<Button type="submit" disabled={loading}>
+							{loading ? <LoaderCircle className="animate-spin"/> : 'Start Interview'}
+							</Button>
 					</div>
 						</form>
 
