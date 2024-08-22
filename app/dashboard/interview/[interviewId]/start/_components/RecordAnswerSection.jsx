@@ -25,6 +25,7 @@ function RecordAnswerSection({mockInterviewQuestion, activeQuestionIndex, interv
 		interimResult,
 		isRecording,
 		results,
+		setResults,
 		startSpeechToText,
 		stopSpeechToText,
 	  } = useSpeechToText({
@@ -80,8 +81,10 @@ function RecordAnswerSection({mockInterviewQuestion, activeQuestionIndex, interv
 			})
 			if(res){
 				toast.success('Answer recorded successfully')
+				setUserAnswer('')
+				setResults([])
 			}
-			setUserAnswer('')
+			setResults([])
 			setLoading(false)
 	}
 
