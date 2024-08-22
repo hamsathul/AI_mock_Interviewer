@@ -64,7 +64,7 @@ function AddNewInterview() {
 				createdAt: moment().format('DD-MM-yyyy')
 			}).returning({mockId:mockInterview.mockId})
 			
-			console.log("Inserted Id: ", response)
+			// console.log("Inserted Id: ", response)
 			setLoading(false)
 			if(response){
 				setOpenDialogue(false)

@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation'
 function Feedback({params}) {
 
 	const [feedbackList, setFeedbackList] = React.useState([])
+	const [overallRating, setOverallRating] = React.useState(0);
 	const router = useRouter()
 	useEffect(() => {
 		getFeedback()
@@ -29,8 +30,17 @@ function Feedback({params}) {
 		.where(eq(UserAnswers.mockIdRef, params.interviewId))
 		.orderBy(UserAnswers.id)
 
-		console.log(res)
+		// console.log(res)
 		setFeedbackList(res)
+
+		// Calculate overall rating
+		if (res.length > 0) {
+			const totalRating = res.reduce((sum, feedback) => sum + parseInt(feedback.rating), 0);
+			const averageRating = totalRating / res.length;
+			const scaledRating = (averageRating / 5) * 10; // Assuming original ratings are out of 5
+			setOverallRating(scaledRating.toFixed(1)); // Round to one decimal place
+		  }
+
 	}
   return (
 	<div className='p-10'>
@@ -42,7 +52,7 @@ function Feedback({params}) {
 		<h2 className='text-3xl font-bold text-green-500'>Congratulations</h2>
 		<h2 className='font-bold text-2xl'>Here is your interview feedback</h2>
 		
-		<h2 className='text-primary text-lg my-3'>Your overall interview rating: <strong>7/10</strong></h2>
+		<h2 className='text-primary text-lg my-3'>Your overall interview rating: <strong>{overallRating}/10</strong></h2>
 
 		<h2 className='text-sm text-gray-500'>Find below interview questions with correct answer, your answer and feedback</h2>
 

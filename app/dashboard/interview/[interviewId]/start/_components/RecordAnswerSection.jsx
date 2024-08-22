@@ -55,7 +55,7 @@ function RecordAnswerSection({mockInterviewQuestion, activeQuestionIndex, interv
 	}
 
 	const updateUserAnswerInDb=async()=>{
-		console.log(userAnswer)
+		// console.log(userAnswer)
 		setLoading(true)
 			const feedbackPrompt = `Question: ${mockInterviewQuestion[activeQuestionIndex]?.question}, User Answer: ${userAnswer}
 			Depending on the question and users answer, provide a rating from 1-5 and feedback on areas of improvement if any.
@@ -66,7 +66,7 @@ function RecordAnswerSection({mockInterviewQuestion, activeQuestionIndex, interv
 			const result = await chatSession.sendMessage(feedbackPrompt)
 			
 			const mockJsonResp = result.response.text()
-			console.log(mockJsonResp)
+			// console.log(mockJsonResp)
 			const jsonFeedback = JSON.parse(mockJsonResp)
 			const res = await db.insert(UserAnswers)
 			.values({
